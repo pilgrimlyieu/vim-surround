@@ -327,7 +327,9 @@ endfunction
 function! s:deletecustom(char, b, count) abort
   let [before, after] = s:customsurroundings(a:char, a:b, 1)
   let [before_pat, after_pat] = ['\v\C'.s:escape(before), '\v\C'.s:escape(after)]
-  let found = searchpair(before_pat, '', after_pat, 'bcW')
+  " searchpair()'s 'c' flag matches both start and end.
+  " Append '\zs' to the closer pattern so that it doesn't match the closer on the cursor.
+  let found = searchpair(before_pat, '', after_pat.'\zs', 'bcW')
   if found <= 0
     return ['','']
   endif
